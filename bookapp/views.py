@@ -1,0 +1,50 @@
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+
+from bookapp.forms import BookForm
+from bookapp.models import Book
+
+# Create your views here.
+class BookCreate(CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'bookapp/form.html'
+    success_url = reverse_lazy('book_list')
+
+class BookList(LoginRequiredMixin, ListView):
+    model = Book
+    context_object_name = 'books'
+    template_name = 'bookapp/list.html'
+
+class BookUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = 'bookapp.change_book'
+    model = Book
+    form_class = BookForm
+    template_name = 'bookapp/form.html'
+    success_url = reverse_lazy('book_list')
+
+class BookDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = 'bookapp.delete_book'
+    model = Book
+    template_name = 'bookapp/confirm_delete.html'
+    success_url = reverse_lazy('book_list')
+
+class BookDetail(PermissionRequiredMixin, DetailView):
+    permission_required = 'bookapp.view_book'
+    model = Book
+    template_name = 'bookapp/detail.html'
+    context_object_name = 'book'
+
+def register(request):
+    form = UserCreationForm(request.POST or None)
+    if form.is_valid():
+        user = form.save()
+        return redirect('book_list')
+    return render(request, 'bookapp/form.html', {'form': form})
