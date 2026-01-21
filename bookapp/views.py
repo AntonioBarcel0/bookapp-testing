@@ -3,12 +3,14 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
 from bookapp.forms import BookForm
 from bookapp.models import Book
 
 # Create your views here.
-class BookCreate(LoginRequiredMixin, CreateView):
+
+# BUG CORREGIDO: Añadido PermissionRequiredMixin para la creación de libros
+class BookCreate(PermissionRequiredMixin, CreateView):
+    permission_required = 'bookapp.add_book'
     model = Book
     form_class = BookForm
     template_name = 'bookapp/form.html'
