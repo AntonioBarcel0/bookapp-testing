@@ -62,13 +62,12 @@ Probé cada ruta con dos tipos de usuario: admin (con permisos) y regular (sin p
 
 Primero activa el entorno virtual:
 
-source .venv/Scripts/activate  # Git Bash en Windows
-# o
-.venv\Scripts\Activate.ps1     # PowerShell
+- source .venv/Scripts/activate  # Git Bash en Windows
+
+- .venv\Scripts\Activate.ps1     # PowerShell
 
 Luego ejecuta los tests:
 
-bash
 # Todos los tests
 python manage.py test bookapp
 
