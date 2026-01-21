@@ -72,18 +72,18 @@ bash
 # Todos los tests
 python manage.py test bookapp
 
-# Por categoría
+## Por categoría
 python manage.py test bookapp.tests.BookModelTest
 python manage.py test bookapp.tests.BookFormTest
 python manage.py test bookapp.tests.BookViewsTest
 
-# Test específico
+## Test específico
 python manage.py test bookapp.tests.BookModelTest.test_book_creation_correct_without_author_and_cover
 
-# 📊 Resultados
+## 📊 Resultados
 Los 24 tests se ejecutan en aproximadamente 12 segundos y todos pasan correctamente después de corregir los bugs mencionados [code_file:10].
 
-# 📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto
 text
 bookproject/
 ├── manage.py
@@ -102,7 +102,7 @@ bookproject/
             ├── list.html
             ├── detail.html
             └── confirm_delete.html
-# 💡 Lo que Aprendí
+## 💡 Lo que Aprendí
 Importancia de escribir tests antes de considerar el código "terminado"
 
 Los tests ayudan a encontrar bugs que a simple vista no se ven
@@ -113,7 +113,7 @@ Es crucial probar los permisos de usuario para evitar accesos no autorizados
 
 Los mensajes de error personalizados mejoran mucho la experiencia de usuario
 
-# 🛠️ Tecnologías
+## 🛠️ Tecnologías
 Python 3.x
 
 Django 4.x
@@ -122,6 +122,6 @@ SQLite (base de datos de tests)
 
 Pillow (para manejo de imágenes)
 
-## Autor: Antonio Barceló
-## Curso: 2º Desarrollo de Aplicaciones Web (2DAW)
-## Asignatura: Desarrollo Web en Entorno Servidor
+### Autor: Antonio Barceló
+### Curso: 2º Desarrollo de Aplicaciones Web (2DAW)
+### Asignatura: Desarrollo Web en Entorno Servidor
