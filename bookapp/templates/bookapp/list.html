@@ -1,23 +1,64 @@
 {% extends 'bookapp/layout.html' %}
 
 {% block content %}
-        <ul>
-            {% for book in books %}
-                <li>{{book.title}}</li>
-                {% if user.is_authenticated %}
-                <a href="{% url 'book_detail' book.pk %}">Details</a>
-                {% endif %}
-                {% if perms.bookapp.change_book %}
-                <a href="{% url 'book_edit' book.pk %}">Edit</a>
-                {% endif %}
-                {% if perms.bookapp.delete_book %}
+<h2>Book List</h2>
+
+<form method="get" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by title" value="{{ request.GET.search }}">
+    <button type="submit">Search</button>
+    <a href="{% url 'book_list' %}">Clear</a>
+</form>
+
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th><a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}order={% if request.GET.order == 'title' %}-title{% else %}title{% endif %}">Title</a></th>
+            <th><a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}order={% if request.GET.order == 'pages' %}-pages{% else %}pages{% endif %}">Pages</a></th>
+            <th><a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}order={% if request.GET.order == 'rating' %}-rating{% else %}rating{% endif %}">Rating</a></th>
+            <th><a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}order={% if request.GET.order == 'status' %}-status{% else %}status{% endif %}">Status</a></th>
+            <th><a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}order={% if request.GET.order == 'published_date' %}-published_date{% else %}published_date{% endif %}">Published Date</a></th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.title }}</td>
+            <td>{{ book.pages }}</td>
+            <td>{{ book.rating|default:"-" }}</td>
+            <td>{{ book.get_status_display }}</td>
+            <td>{{ book.published_date }}</td>
+            <td>
+                <a href="{% url 'book_detail' book.pk %}">View</a> |
+                <a href="{% url 'book_edit' book.pk %}">Edit</a> |
                 <a href="{% url 'book_delete' book.pk %}">Delete</a>
-                {% endif %}
-            {% empty %}
-                There are no books
-            {% endfor %}
-        </ul>
-        {% if perms.bookapp.add_book %}
-        <a href="{% url 'form' %}">New book</a>
-        {% endif %}
-{% endblock content %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No books found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Last</a>
+    {% endif %}
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'form' %}">Add New Book</a> |
+    <a href="{% url 'book_stats' %}">View Statistics</a>
+</div>
+
+{% endblock %}

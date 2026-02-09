@@ -1,0 +1,108 @@
+{% extends 'bookapp/layout.html' %}
+
+{% block content %}
+<h2>Book Statistics</h2>
+
+<div style="margin-bottom: 30px;">
+    <h3>General Statistics</h3>
+    <ul>
+        <li><strong>Book with most pages:</strong> {{ max_pages_book.title }} ({{ max_pages_book.pages }} pages)</li>
+        <li><strong>Book with fewest pages:</strong> {{ min_pages_book.title }} ({{ min_pages_book.pages }} pages)</li>
+        <li><strong>Average number of pages:</strong> {{ avg_pages|floatformat:2 }}</li>
+        <li><strong>Average rating:</strong> {{ avg_rating|floatformat:2 }}</li>
+    </ul>
+</div>
+
+<div style="margin-bottom: 30px;">
+    <h3>Books by Status</h3>
+    <canvas id="statusChart" width="400" height="400"></canvas>
+</div>
+
+<div style="margin-bottom: 30px;">
+    <h3>Books by Rating</h3>
+    <canvas id="ratingChart" width="400" height="300"></canvas>
+</div>
+
+<div>
+    <a href="{% url 'book_list' %}">Back to List</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const statusData = {
+        labels: {{ status_labels|safe }},
+        datasets: [{
+            data: {{ status_values|safe }},
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(75, 192, 192, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    const statusConfig = {
+        type: 'pie',
+        data: statusData,
+        options: {
+            responsive: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Number of Books by Status'
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('statusChart'), statusConfig);
+
+    const ratingData = {
+        labels: {{ rating_labels|safe }},
+        datasets: [{
+            label: 'Number of Books',
+            data: {{ rating_values|safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const ratingConfig = {
+        type: 'bar',
+        data: ratingData,
+        options: {
+            responsive: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Number of Books by Rating'
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('ratingChart'), ratingConfig);
+</script>
+
+{% endblock %}
